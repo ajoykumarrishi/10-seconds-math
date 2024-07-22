@@ -6,35 +6,65 @@ let timerInterval;
 // Generate random number between start and end (inclusive)
 const generateRandomNumber = (start, end) => Math.floor(Math.random() * (end - start + 1)) + start;
 
-// Generate random pair of numbers for the specified game mode and return the pair along with the correct answer
-const generateRandomPair = (gameMode) => {
-    let numOne, numTwo;
-    switch (gameMode) {
+// Mode specific random pair generation
+const generateRandomPairAddition = (start, end) => {
+    const numOne = generateRandomNumber(start, end);
+    const numTwo = generateRandomNumber(start, end);
+    correctAnswer = numOne + numTwo;
+    return [numOne, numTwo, '+'];
+}
+
+const generateRandomPairSubtraction = (start, end) => {
+    let numOne = generateRandomNumber(start, end);
+    let numTwo = generateRandomNumber(start, end);
+    while (numOne < numTwo) {
+        numOne = generateRandomNumber(start, end);
+        numTwo = generateRandomNumber(start, end);
+    }
+    correctAnswer = numOne - numTwo;
+    return [numOne, numTwo, '-'];
+}
+
+const generateRandomPairMultiplication = (start, end) => {
+    const numOne = generateRandomNumber(start, end);
+    const numTwo = generateRandomNumber(start, end);
+    correctAnswer = numOne * numTwo;
+    return [numOne, numTwo, '*'];
+}
+
+const generateRandomPairDivision = (start, end) => {
+    let numOne = generateRandomNumber(start, end);
+    let numTwo = generateRandomNumber(start, end);
+    while (numOne % numTwo !== 0) {
+        numOne = generateRandomNumber(start, end);
+        numTwo = generateRandomNumber(start, end);
+    }
+    correctAnswer = numOne / numTwo;
+    return [numOne, numTwo, '/'];
+}
+
+// Generate random pair of numbers for the specified game mode and return the pair along with the correct answer and operand
+const generateRandomPair = (start, end, mode) => {
+    let numOne, numTwo, operand;
+    switch (mode) {
         case 'addition':
-            numOne = generateRandomNumber(1, 20);
-            numTwo = generateRandomNumber(1, 20);
-            correctAnswer = numOne + numTwo;
+            [numOne, numTwo, operand] = generateRandomPairAddition(start, end);
             break;
         case 'subtraction':
-            numOne = generateRandomNumber(10, 30);
-            numTwo = generateRandomNumber(1, 10);
-            correctAnswer = numOne - numTwo;
+            [numOne, numTwo, operand] = generateRandomPairSubtraction(start, end);
             break;
         case 'multiplication':
-            numOne = generateRandomNumber(1, 10);
-            numTwo = generateRandomNumber(1, 10);
-            correctAnswer = numOne * numTwo;
+            [numOne, numTwo, operand] = generateRandomPairMultiplication(start, end);
             break;
         case 'division':
-            numOne = generateRandomNumber(1, 10) * generateRandomNumber(1, 10);
-            numTwo = generateRandomNumber(1, 10);
-            correctAnswer = numOne / numTwo;
+            [numOne, numTwo, operand] = generateRandomPairDivision(start, end);
             break;
         case 'mixed':
             const modes = ['addition', 'subtraction', 'multiplication', 'division'];
-            return generateRandomPair(modes[generateRandomNumber(0, 3)]);
+            [numOne, numTwo, operand] = generateRandomPair(start, end, modes[generateRandomNumber(0, 3)]);
+            break;
     }
-    return { numOne, numTwo };
+    return [numOne, numTwo, operand];
 };
 
 // Update the timer display
@@ -49,8 +79,7 @@ const startTimer = () => {
         updateTimerDisplay();
         if (timeRemaining === 0) {
             clearInterval(timerInterval);
-            userGuess.prop('disabled', true);
-            startButton.prop('disabled', true);
+            endGame();
         }
     }, 1000);
 };
@@ -66,28 +95,54 @@ const updateGameStatus = (isCorrect) => {
 }
 
 // Start a new round
-const nextRound = (gameMode) => {
-    const { numOne, numTwo } = generateRandomPair(gameMode);
-    question.text(`${numOne} + ${numTwo}`);
+const nextRound = (start, end, game) => {
+    const [numOne, numTwo, operand] = generateRandomPair(start, end, game);
+    question.text(`${numOne} ${operand} ${numTwo}`);
 };
 
 // Initialize the game
 const initializeGame = () => {
+    resetGameStatus();
+    updateUIForGameStart();
+    startTimer();
+    nextRound(1, 20, gameModeSelect.val());
+};
+
+// Reset the game status
+const resetGameStatus = () => {
     score = 0;
     timeRemaining = 10;
+    correctAnswer = null;
+}
+
+// Update the UI for game start
+const updateUIForGameStart = () => {
     scoreBoard.text(`Score: ${score}`);
     userGuess.val('');
     userGuess.prop('disabled', false);
     startButton.prop('disabled', true);
-    startTimer();
-    nextRound(gameModeSelect.val());
+    gameModeSelect.prop('disabled', true);
+};
+
+// End the game and update UI
+const endGame = () => {
+    userGuess.prop('disabled', true);
+    startButton.prop('disabled', true);
+    gameModeSelect.prop('disabled', false);
 };
 
 // Reset the game
 const resetGame = () => {
     clearInterval(timerInterval);
+    resetGameStatus();
+    updateUIForGameReset();
+}
+
+// Update the UI for game reset
+const updateUIForGameReset = () => {
     userGuess.prop('disabled', true);
     startButton.prop('disabled', false);
+    gameModeSelect.prop('disabled', false);
     timer.text(`10s`);
     scoreBoard.text(`Score: 0`);
     question.text('');
@@ -112,7 +167,7 @@ userGuess.on('keydown', (e) => {
             updateGameStatus(true);
             userGuess.val('');
             userGuess.prop('placeholder', 'Enter your answer');
-            nextRound(gameModeSelect.val());
+            nextRound(1, 20, gameModeSelect.val());
         } else {
             userGuess.val('');
             userGuess.prop('placeholder', 'Try again');
