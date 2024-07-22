@@ -1,5 +1,6 @@
+/* General Styles */
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inconsolata', monospace;
   background-color: #f0f8ff;
   display: flex;
   justify-content: center;
@@ -8,87 +9,42 @@ body {
   margin: 0;
 }
 
+/* Game Container */
 .game-container {
+  max-width: 500px;
   background-color: #fff5ee;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
 }
 
+/* Game Elements */
 h1 {
-  color: #ff69b4;
-  margin-bottom: 20px;
+  color: #ff69b4 !important;
 }
 
 .timer {
-  font-size: 48px;
-  font-weight: bold;
-  color: #1e90ff;
-  margin-bottom: 20px;
+  color: #1e90ff !important;
 }
 
 .score {
-  font-size: 24px;
-  color: #32cd32;
-  margin-bottom: 20px;
+  color: #32cd32 !important;
 }
 
 .question {
-  font-size: 36px;
-  font-weight: bold;
-  color: #ff69b4;
-  margin-bottom: 20px;
+  color: #ff69b4 !important;
 }
 
-input[type="number"] {
-  font-size: 24px;
-  padding: 10px;
-  width: 100%;
-  border: 2px solid #ffc0cb;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-button {
-  font-size: 18px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-.submit-btn {
-  background-color: #1e90ff;
-  color: white;
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
+/* Form Elements */
+input[type="number"],
 select {
-  font-size: 16px;
-  padding: 5px;
-  border-radius: 5px;
-  border: 2px solid #ffc0cb;
+  border: none !important;
 }
 
+/* Buttons */
 .start-btn {
-  background-color: #32cd32;
+  background-color: #32cd32 !important;
   color: white;
 }
 
 .reset-btn {
-  background-color: #ff69b4;
+  background-color: #ff69b4 !important;
   color: white;
 }
