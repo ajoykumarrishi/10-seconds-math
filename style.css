@@ -48,3 +48,14 @@ select {
   background-color: #ff69b4 !important;
   color: white;
 }
+
+/* Range Inputs */
+#start-range,
+#end-range {
+  border: 1px solid #ced4da !important;
+}
+
+.form-label {
+  color: #ff69b4;
+  font-weight: bold;
+}
